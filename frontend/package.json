@@ -1,0 +1,17 @@
+{
+    "name": "trytaketwo-frontend",
+    "version": "1.0.0",
+    "description": "TryTakeTwo Video Editor - Frontend",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test": "node src/tests/editFlow.test.js"
+    },
+    "dependencies": {
+        "zustand": "^5.0.11"
+    },
+    "devDependencies": {
+        "vite": "^6.0.0"
+    }
+}

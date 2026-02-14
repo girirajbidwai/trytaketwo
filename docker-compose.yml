@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/data:/app/backend/data
+      - ./backend/storage:/app/backend/storage
+    environment:
+      - PORT=3001
+      - STORAGE_PATH=/app/backend/storage
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      - API_TARGET=http://backend:3001
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/frontend/src
+      # Sync node_modules prevents local host node_modules from overriding container's
+      - /app/frontend/node_modules

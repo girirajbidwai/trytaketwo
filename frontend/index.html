@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TryTakeTwo – Video Editor (Pro)</title>
+  <meta name="description" content="Professional Web Video Editor" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+
+<body>
+  <div id="app">
+    <!-- Project Manager (Overlay) -->
+    <div id="project-manager" class="screen active">
+      <div class="pm-bg"></div>
+      <div class="pm-modal">
+        <div class="pm-title-group">
+          <h1 class="pm-title">TryTakeTwo</h1>
+          <p class="pm-subtitle">Professional Video Editor</p>
+        </div>
+        <button id="btn-new-project" class="btn btn-primary w-full">
+          <span class="icon">+</span> Create New Project
+        </button>
+        <div id="project-list" class="project-list-clean"></div>
+      </div>
+    </div>
+
+    <!-- Editor Workspace (Clipchamp Style) -->
+    <div id="editor" class="screen pro-editor">
+      <!-- Sidebar Navigation -->
+      <nav class="side-nav">
+        <div class="nav-top">
+          <button class="nav-item active" title="Your media">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <path d="M21 15l-5-5L5 21" />
+            </svg>
+            <span>Media</span>
+          </button>
+          <button class="nav-item" title="Record & create">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M23 7l-7 5 7 5V7z" />
+              <rect x="1" y="5" width="15" height="14" rx="2" />
+            </svg>
+            <span>Record</span>
+          </button>
+          <button class="nav-item" title="Content library">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+            </svg>
+            <span>Library</span>
+          </button>
+          <button class="nav-item" title="Text overlays">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 7V4h16v3M9 20h6M12 4v16" />
+            </svg>
+            <span>Text</span>
+          </button>
+          <button class="nav-item" title="Transitions">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M2 13l2 2 4-4 4 4 4-4 4 4 2-2" />
+            </svg>
+            <span>Transitions</span>
+          </button>
+        </div>
+        <div class="nav-bottom">
+          <button id="sidebar-theme-toggle" class="nav-item" title="Toggle theme">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+            <span>Theme</span>
+          </button>
+          <button id="btn-back" class="nav-item" title="Home">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            <span>Home</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="main-work-area">
+        <!-- Top Bar -->
+        <header class="app-bar">
+          <div class="app-branding">
+            <span id="project-name" class="project-name">Untitled video</span>
+          </div>
+
+          <div class="app-center">
+            <div class="app-transport">
+              <button id="btn-skip-start" class="transport-btn">⏮</button>
+              <button id="btn-play" class="transport-btn play-btn">▶</button>
+              <button id="btn-skip-end" class="transport-btn">⏭</button>
+              <div id="timecode" class="timecode-display">00:00:00.000</div>
+            </div>
+          </div>
+
+          <div class="app-actions">
+            <div class="zoom-cluster">
+              <button id="btn-zoom-out" class="mini-btn">−</button>
+              <span id="zoom-level" class="zoom-label">100%</span>
+              <button id="btn-zoom-in" class="mini-btn">+</button>
+            </div>
+            <button id="btn-save" class="btn btn-secondary">Save</button>
+            <button id="btn-export" class="btn btn-primary">Export</button>
+          </div>
+        </header>
+
+        <!-- Dynamic Grid Workspace -->
+        <div class="workspace-grid">
+          <!-- Left: Asset List -->
+          <aside class="pane pane-left">
+            <!-- Media Panel -->
+            <div id="panel-media" class="panel-view active">
+              <div class="pane-header">
+                <h3>Your media</h3>
+                <label class="btn btn-primary btn-sm upload-trigger">
+                  Import media
+                  <input type="file" id="file-upload" accept="video/*,audio/*,image/png,image/jpeg" multiple hidden />
+                </label>
+              </div>
+              <div id="asset-list" class="asset-grid"></div>
+            </div>
+
+            <!-- Library Panel -->
+            <div id="panel-library" class="panel-view">
+              <div class="pane-header">
+                <h3>Content Library</h3>
+              </div>
+              <div class="library-content">
+                <div class="library-section">
+                  <h4 class="library-section-title">Backgrounds</h4>
+                  <div class="library-grid">
+                    <button class="library-item" data-bg-type="solid" data-bg-value="#000000">
+                      <div class="library-thumb" style="background:#000"></div>
+                      <span>Black</span>
+                    </button>
+                    <button class="library-item" data-bg-type="solid" data-bg-value="#ffffff">
+                      <div class="library-thumb" style="background:#fff"></div>
+                      <span>White</span>
+                    </button>
+                    <button class="library-item" data-bg-type="gradient"
+                      data-bg-value="linear-gradient(135deg,#667eea,#764ba2)">
+                      <div class="library-thumb" style="background:linear-gradient(135deg,#667eea,#764ba2)"></div>
+                      <span>Purple Haze</span>
+                    </button>
+                    <button class="library-item" data-bg-type="gradient"
+                      data-bg-value="linear-gradient(135deg,#f093fb,#f5576c)">
+                      <div class="library-thumb" style="background:linear-gradient(135deg,#f093fb,#f5576c)"></div>
+                      <span>Warm Pink</span>
+                    </button>
+                    <button class="library-item" data-bg-type="gradient"
+                      data-bg-value="linear-gradient(135deg,#4facfe,#00f2fe)">
+                      <div class="library-thumb" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"></div>
+                      <span>Ocean Blue</span>
+                    </button>
+                    <button class="library-item" data-bg-type="gradient"
+                      data-bg-value="linear-gradient(135deg,#43e97b,#38f9d7)">
+                      <div class="library-thumb" style="background:linear-gradient(135deg,#43e97b,#38f9d7)"></div>
+                      <span>Mint Fresh</span>
+                    </button>
+                    <button class="library-item" data-bg-type="gradient"
+                      data-bg-value="linear-gradient(135deg,#fa709a,#fee140)">
+                      <div class="library-thumb" style="background:linear-gradient(135deg,#fa709a,#fee140)"></div>
+                      <span>Sunset</span>
+                    </button>
+                    <button class="library-item" data-bg-type="gradient"
+                      data-bg-value="linear-gradient(135deg,#a18cd1,#fbc2eb)">
+                      <div class="library-thumb" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)"></div>
+                      <span>Lavender</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="library-section">
+                  <h4 class="library-section-title">Text Templates</h4>
+                  <div class="library-grid">
+                    <button class="library-item" data-text-preset="title">
+                      <div class="library-thumb library-text-thumb"><strong>Aa</strong></div>
+                      <span>Title</span>
+                    </button>
+                    <button class="library-item" data-text-preset="subtitle">
+                      <div class="library-thumb library-text-thumb" style="font-size:12px"><em>Aa</em></div>
+                      <span>Subtitle</span>
+                    </button>
+                    <button class="library-item" data-text-preset="lower-third">
+                      <div class="library-thumb library-text-thumb"
+                        style="font-size:10px;justify-content:flex-end;padding-bottom:8px">▬ Aa</div>
+                      <span>Lower Third</span>
+                    </button>
+                    <button class="library-item" data-text-preset="caption">
+                      <div class="library-thumb library-text-thumb" style="font-size:10px;background:rgba(0,0,0,0.7)">Cc
+                      </div>
+                      <span>Caption</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Transitions Panel -->
+            <div id="panel-transitions" class="panel-view">
+              <div class="pane-header">
+                <h3>Transitions</h3>
+              </div>
+              <div class="transitions-content">
+                <p class="transitions-hint">Select a clip, then click a transition to apply it.</p>
+                <div class="library-section">
+                  <h4 class="library-section-title">Basic</h4>
+                  <div class="library-grid">
+                    <button class="transition-item" data-transition="fade">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">◐</div>
+                      </div>
+                      <span>Fade</span>
+                    </button>
+                    <button class="transition-item" data-transition="crossfade">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⬡</div>
+                      </div>
+                      <span>Crossfade</span>
+                    </button>
+                    <button class="transition-item" data-transition="dissolve">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⊞</div>
+                      </div>
+                      <span>Dissolve</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="library-section">
+                  <h4 class="library-section-title">Wipes & Slides</h4>
+                  <div class="library-grid">
+                    <button class="transition-item" data-transition="wipe-left">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">◧</div>
+                      </div>
+                      <span>Wipe Left</span>
+                    </button>
+                    <button class="transition-item" data-transition="wipe-right">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">◨</div>
+                      </div>
+                      <span>Wipe Right</span>
+                    </button>
+                    <button class="transition-item" data-transition="wipe-up">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⬒</div>
+                      </div>
+                      <span>Wipe Up</span>
+                    </button>
+                    <button class="transition-item" data-transition="wipe-down">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⬓</div>
+                      </div>
+                      <span>Wipe Down</span>
+                    </button>
+                    <button class="transition-item" data-transition="slide-left">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⏴</div>
+                      </div>
+                      <span>Slide Left</span>
+                    </button>
+                    <button class="transition-item" data-transition="slide-right">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⏵</div>
+                      </div>
+                      <span>Slide Right</span>
+                    </button>
+                  </div>
+                </div>
+                <div class="library-section">
+                  <h4 class="library-section-title">Effects</h4>
+                  <div class="library-grid">
+                    <button class="transition-item" data-transition="zoom-in">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⊕</div>
+                      </div>
+                      <span>Zoom In</span>
+                    </button>
+                    <button class="transition-item" data-transition="zoom-out">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">⊖</div>
+                      </div>
+                      <span>Zoom Out</span>
+                    </button>
+                    <button class="transition-item" data-transition="blur">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon" style="filter:blur(2px)">◉</div>
+                      </div>
+                      <span>Blur</span>
+                    </button>
+                    <button class="transition-item" data-transition="none">
+                      <div class="library-thumb transition-preview">
+                        <div class="trans-icon">✕</div>
+                      </div>
+                      <span>None</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Center: Preview -->
+          <main class="pane pane-center">
+            <div class="preview-container">
+              <video id="preview-video" hidden crossorigin="anonymous"></video>
+              <canvas id="preview-canvas"></canvas>
+            </div>
+          </main>
+
+          <aside class="pane pane-right">
+            <div class="pane-header">
+              <h3 id="props-title">Properties</h3>
+            </div>
+            <div id="props-content" class="inspector-content">
+              <div class="empty-state">Select a clip to edit</div>
+            </div>
+          </aside>
+
+          <!-- Bottom: Timeline -->
+          <section class="pane pane-bottom">
+            <div class="timeline-toolbar-mini">
+              <button id="btn-split" class="tool-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M12 2v20M4 12h16" />
+                </svg>
+                Split
+              </button>
+              <button id="btn-delete-clip" class="tool-btn danger">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                </svg>
+                Delete
+              </button>
+            </div>
+            <div class="timeline-scroll-area" id="timeline-scroll">
+              <div class="timeline-ruler" id="timeline-ruler"></div>
+              <div class="timeline-playhead" id="timeline-playhead">
+                <div class="playhead-knob"></div>
+                <div class="playhead-spine"></div>
+              </div>
+              <div class="timeline-tracks-container" id="timeline-tracks"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Global Shared Elements (Moved out of editor) -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Create Project Modal -->
+    <div id="new-project-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>New Project</h3>
+          <button id="btn-new-project-close" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="creation-focus-area">
+            <div class="input-group">
+              <label for="input-project-name">Project Name</label>
+              <input type="text" id="input-project-name" class="prop-input w-full" placeholder="e.g. My Amazing Video"
+                autocomplete="off" />
+            </div>
+            <p class="input-hint">Give your project a name to get started.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-create-project-confirm" class="btn btn-primary w-full">Create Project</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Modal (Overlay) -->
+    <div id="export-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Exporting Video</h3>
+          <button id="btn-export-close" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="export-status">Preparing render...</div>
+          <div id="export-progress-wrap" class="progress-track hidden">
+            <div id="export-progress-bar" class="progress-value"></div>
+            <span id="export-progress-label" class="progress-label">0%</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="btn-export-start" class="btn btn-primary w-full">Start Export</button>
+          <div id="export-download" class="hidden">
+            <a id="export-download-link" class="btn btn-success w-full" download>Download</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-backdrop hidden" id="global-backdrop"></div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
